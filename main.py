@@ -6,14 +6,24 @@ from gi.repository import Gtk
 
 
 class Request:
-    def get(self, url):
+    def get(self, url) -> dict:
         c = pycurl.Curl()
         c.setopt(c.URL, url)
         c.perform()
+
         # print(c)  # DATA
-        print (c.getinfo(c.HTTP_CODE), c.getinfo(c.EFFECTIVE_URL))
-        print ("time taken:", c.getinfo(c.TOTAL_TIME))
+        # print (c.getinfo(c.HTTP_CODE), c.getinfo(c.EFFECTIVE_URL))
+        # print ("time taken:", c.getinfo(c.TOTAL_TIME))
+
+        time = c.getinfo(c.TOTAL_TIME)
+        status_code = c.getinfo(c.HTTP_CODE)
         c.close()
+        return {
+            'url': url,
+            'method': 'GET',
+            'time': time,
+            'status_code': status_code
+        }
 
 
 class MyWindow(object):
@@ -36,10 +46,16 @@ class MyWindow(object):
         if event.keyval in [13, 65293]:
             btn_send = self.builder.get_object("btn_send_url")
             btn_send.set_label("Sending...")
-
-            Request().get(widget.get_text())
-
+            rs = Request().get(widget.get_text())
             btn_send.set_label("Send")
+
+            h = self.builder.get_object("history_data")
+            h.append(None, [
+                rs["url"],
+                rs["time"],
+                rs["method"],
+                rs["status_code"]
+            ])
 
 
 

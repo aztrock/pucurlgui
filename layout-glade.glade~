@@ -2,6 +2,38 @@
 <!-- Generated with glade 3.38.2 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
+  <object class="GtkListStore" id="dropdown_method_list">
+    <columns>
+      <!-- column-name key -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">GET</col>
+      </row>
+      <row>
+        <col id="0">POST</col>
+      </row>
+      <row>
+        <col id="0">PUT</col>
+      </row>
+      <row>
+        <col id="0">DELETE</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkTreeStore" id="history_data">
+    <columns>
+      <!-- column-name url -->
+      <column type="gchararray"/>
+      <!-- column-name time -->
+      <column type="gfloat"/>
+      <!-- column-name method -->
+      <column type="gchararray"/>
+      <!-- column-name status_code -->
+      <column type="gint"/>
+    </columns>
+  </object>
   <object class="GtkWindow" id="window1">
     <property name="can-focus">False</property>
     <child>
@@ -30,16 +62,19 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <child>
-              <object class="GtkMenuButton">
+              <object class="GtkComboBox" id="drop_method">
+                <property name="name">dropdown_method</property>
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="focus-on-click">False</property>
-                <property name="receives-default">True</property>
-                <property name="action-name">Method</property>
-                <property name="active">True</property>
-                <property name="align-widget">box1</property>
+                <property name="can-focus">False</property>
+                <property name="model">dropdown_method_list</property>
+                <property name="popup-fixed-width">False</property>
+                <property name="id-column">0</property>
+                <property name="active-id">GET</property>
                 <child>
-                  <placeholder/>
+                  <object class="GtkCellRendererText" id="dropdown_method_selected"/>
+                  <attributes>
+                    <attribute name="text">0</attribute>
+                  </attributes>
                 </child>
               </object>
               <packing>
@@ -65,10 +100,11 @@
             </child>
             <child>
               <object class="GtkButton" id="btn_send_url">
-                <property name="label" translatable="yes">Send</property>
+                <property name="label" translatable="yes">button</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
+                <property name="image-position">right</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -87,46 +123,69 @@
           <object class="GtkPaned">
             <property name="visible">True</property>
             <property name="can-focus">True</property>
-            <property name="wide-handle">True</property>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkTreeView">
                 <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="label" translatable="yes">history</property>
+                <property name="can-focus">True</property>
+                <property name="model">history_data</property>
+                <property name="search-column">1</property>
+                <property name="level-indentation">1</property>
+                <property name="tooltip-column">1</property>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection"/>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn">
+                    <property name="title" translatable="yes">column</property>
+                    <property name="sort-column-id">0</property>
+                    <child>
+                      <object class="GtkCellRendererText" id="url"/>
+                      <attributes>
+                        <attribute name="text">0</attribute>
+                      </attributes>
+                    </child>
+                    <child>
+                      <object class="GtkCellRendererText"/>
+                      <attributes>
+                        <attribute name="text">3</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn">
+                    <property name="title" translatable="yes">column</property>
+                    <property name="sort-column-id">1</property>
+                    <child>
+                      <object class="GtkCellRendererText" id="time"/>
+                      <attributes>
+                        <attribute name="text">1</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn">
+                    <property name="title" translatable="yes">column</property>
+                    <child>
+                      <object class="GtkCellRendererText"/>
+                      <attributes>
+                        <attribute name="text">2</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                </child>
               </object>
               <packing>
-                <property name="resize">False</property>
+                <property name="resize">True</property>
                 <property name="shrink">True</property>
               </packing>
             </child>
             <child>
-              <object class="GtkPaned">
+              <object class="GtkLabel">
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="orientation">vertical</property>
-                <property name="wide-handle">True</property>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="label" translatable="yes">body, header and others</property>
-                  </object>
-                  <packing>
-                    <property name="resize">False</property>
-                    <property name="shrink">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="label" translatable="yes">results</property>
-                  </object>
-                  <packing>
-                    <property name="resize">False</property>
-                    <property name="shrink">True</property>
-                  </packing>
-                </child>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">label</property>
               </object>
               <packing>
                 <property name="resize">True</property>
