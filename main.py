@@ -1,5 +1,8 @@
 import gi
 import pycurl
+import certifi
+import json
+from io import BytesIO
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
@@ -7,22 +10,30 @@ from gi.repository import Gtk
 
 class Request:
     def get(self, url) -> dict:
+        buffer = BytesIO()
+
         c = pycurl.Curl()
         c.setopt(c.URL, url)
+        c.setopt(c.WRITEDATA, buffer)
+        c.setopt(c.CAINFO, certifi.where())
         c.perform()
-
-        # print(c)  # DATA
-        # print (c.getinfo(c.HTTP_CODE), c.getinfo(c.EFFECTIVE_URL))
-        # print ("time taken:", c.getinfo(c.TOTAL_TIME))
 
         time = c.getinfo(c.TOTAL_TIME)
         status_code = c.getinfo(c.HTTP_CODE)
         c.close()
+
+        data = buffer.getvalue().decode("iso-8859-1")
+        try:
+            data = json.dumps(json.loads(data), indent=4)
+        except Exception as e:
+            raise e
+
         return {
             'url': url,
             'method': 'GET',
             'time': time,
-            'status_code': status_code
+            'status_code': status_code,
+            'response': str(data)
         }
 
 
@@ -57,6 +68,14 @@ class MyWindow(object):
                 rs["status_code"]
             ])
 
+            id_response = self.builder.get_object("id_text_results")
+            textbuffer = id_response.get_buffer()
+            textbuffer.set_text(rs["response"])
+
+            # This work for add text to the last line
+            # textbuffer = id_response.get_buffer()
+            # start_iter = textbuffer.get_start_iter()
+            # textbuffer.insert(start_iter, rs["response"])
 
 
 MyWindow().run()
